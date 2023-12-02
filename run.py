@@ -1,8 +1,12 @@
 import os
 import json
-from flask import Flask, render_template   # Import Flask Class and render_template function
+from flask import Flask, render_template, request, flash  # Import Flask Class and render_template function   and request library from flask    and function flash from flask
+if os.path.exists("env.py"):
+    import env
 
 app = Flask(__name__)    # Creating Instance and store it inside variable called app ====>>>>>>the first argument of the flask class is the name of application module
+app.secret_key = os.environ.get("SECRET_KEY")
+
 
 @app.route("/")    # Decorator app.route  decorator to wrapping functions
 def index():
@@ -30,8 +34,13 @@ def about_member(member_name):
     return render_template("member.html", member=member)
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        # print(request.form.get("name"))
+        # print(request.form["email"])
+        flash("Thanks {}, We have recieved your message!".format(
+            request.form.get("name")))
     return render_template("contact.html", page_title="Contact")
 
 
